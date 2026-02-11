@@ -1,62 +1,45 @@
 # CLAUDE.md
 
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 ## Project Overview
 
-A single-page stock ticker lookup website. Users enter a stock ticker symbol (e.g. AAPL, MSFT) and receive real-time financial data including price, key statistics, and company details.
+Two standalone stock research tools served as static files (no build step):
 
-## Tech Stack
+1. **Stock Ticker Lookup** (`index.html` + `styles.css` + `app.js`) — simple ticker search using Alpha Vantage API
+2. **Meridian** (`meridian.html`) — full equity research terminal with charts, financials, SWOT analysis, and news
 
-- HTML5
-- CSS3 (custom properties, grid, flexbox)
-- Vanilla JavaScript (ES6+, async/await)
-- [Alpha Vantage API](https://www.alphavantage.co/) for stock data
-
-## Project Structure
-
-```
-/
-  index.html     - Main HTML page with search form and result sections
-  styles.css     - All styling (dark theme, responsive, animations)
-  app.js         - API calls, DOM manipulation, data formatting
-  CLAUDE.md      - This file
-```
-
-## Development
-
-### Setup
-
-No build step required. Open `index.html` in a browser or serve with any static file server:
+## Running Locally
 
 ```bash
-# Python
+# Any static file server works:
 python -m http.server 8000
-
-# Node (npx)
 npx serve .
 ```
 
-### Build
-
-No build step. Pure static files.
-
-### Test
-
-Open in browser and search for known tickers (AAPL, MSFT, GOOGL, AMZN).
-
-### Lint / Format
-
-No linter configured. Standard JS style is used throughout.
+No build, lint, or test tooling is configured.
 
 ## Architecture
 
-- **Single-page app** with no framework or build tools
-- **Two parallel API calls** per search: `GLOBAL_QUOTE` (price data) and `OVERVIEW` (company fundamentals)
-- **CSS custom properties** for theming (dark mode by default)
-- **Responsive design** with mobile breakpoint at 600px
-- All formatting helpers (`formatCurrency`, `formatLargeNumber`, etc.) are pure functions in `app.js`
+### Stock Ticker Lookup (index.html)
+- Vanilla JS, no framework
+- Uses Alpha Vantage `GLOBAL_QUOTE` and `OVERVIEW` endpoints in parallel via `Promise.all`
+- Ships with the `demo` API key (severely rate-limited: 5 calls/min, 25/day; only IBM works reliably). Replace `API_KEY` in `app.js` for real use.
+- All state is managed via DOM class toggling (`hidden` class)
 
-## Important Notes
+### Meridian (meridian.html)
+- Single-file React app loaded via CDN (`react@18`, `react-dom@18`, `@babel/standalone` for JSX transpilation, `recharts` for charts)
+- All code (CSS + JSX) lives in the one HTML file
+- **Data sources**: Yahoo Finance via `allorigins.win` CORS proxy for quotes, summaries, and price history
+- **AI-generated content**: Calls the Anthropic Claude API directly from the browser for SWOT analysis and news curation (requires API key in `callClaude` function, currently empty)
+- State machine: `hero` → `loading` (step-by-step progress) → `dashboard` | `error`
+- Key components: `App` (state machine + data orchestration), `KPICard`, `MiniBarCard`, `SWOTGrid`, `NewsList`, `ValuationTable`, `CustomTooltip`
+- Helper functions: `safeVal` (deep property access with `.raw` unwrapping for Yahoo API), `fmtNum`/`fmtPct`/`fmtCurrency`/`fmtDate`/`qLabel` (formatting)
+- `computeQuarterly()` derives profitability ratios, liquidity metrics, and FCF from raw Yahoo financial statements
 
-- The app ships with the Alpha Vantage `demo` API key which is severely rate-limited (5 calls/min, 25/day). Replace `API_KEY` in `app.js` with a free key from https://www.alphavantage.co/support/#api-key for regular use.
-- All API calls are client-side; no secrets are hidden from the browser.
-- The `demo` key only returns data for a limited set of tickers (IBM works reliably with the demo key).
+## Key Details
+
+- Both apps are entirely client-side; API keys are exposed in the browser
+- The Meridian `callClaude` function has an empty `x-api-key` header — it needs a valid Anthropic API key to enable SWOT and news features. Without it, hardcoded fallback data is used.
+- Yahoo Finance data is accessed through a CORS proxy (`allorigins.win`), which may be unreliable
+- CSS uses custom properties throughout — Ticker Lookup has a dark theme, Meridian has a cream/editorial theme with grain texture overlay
