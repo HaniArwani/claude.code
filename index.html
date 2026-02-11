@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Ticker Lookup</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Stock Ticker Lookup</h1>
+            <p class="subtitle">Enter a ticker symbol to get real-time financial data</p>
+        </header>
+
+        <div class="search-section">
+            <form id="search-form">
+                <div class="search-bar">
+                    <input
+                        type="text"
+                        id="ticker-input"
+                        placeholder="Enter ticker symbol (e.g. AAPL, MSFT, GOOGL)"
+                        autocomplete="off"
+                        maxlength="10"
+                    >
+                    <button type="submit" id="search-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        Search
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Fetching stock data...</p>
+        </div>
+
+        <div id="error" class="error-message hidden"></div>
+
+        <div id="stock-results" class="stock-results hidden">
+            <!-- Company Header -->
+            <div class="company-header">
+                <div class="company-info">
+                    <h2 id="company-name"></h2>
+                    <span id="ticker-badge" class="ticker-badge"></span>
+                    <span id="exchange-badge" class="exchange-badge"></span>
+                </div>
+                <div class="price-section">
+                    <span id="current-price" class="current-price"></span>
+                    <span id="price-change" class="price-change"></span>
+                </div>
+            </div>
+
+            <!-- Key Stats Grid -->
+            <div class="section">
+                <h3>Key Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">Open</span>
+                        <span id="stat-open" class="stat-value">--</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Previous Close</span>
+                        <span id="stat-prev-close" class="stat-value">--</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Day High</span>
+                        <span id="stat-high" class="stat-value">--</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Day Low</span>
+                        <span id="stat-low" class="stat-value">--</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">52-Week High</span>
+                        <span id="stat-52high" class="stat-value">--</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">52-Week Low</span>
+                        <span id="stat-52low" class="stat-value">--</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Volume</span>
+                        <span id="stat-volume" class="stat-value">--</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Avg Volume</span>
+                        <span id="stat-avg-volume" class="stat-value">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Details -->
+            <div class="section">
+                <h3>Company Details</h3>
+                <div class="details-grid">
+                    <div class="detail-row">
+                        <span class="detail-label">Market Cap</span>
+                        <span id="detail-market-cap" class="detail-value">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">P/E Ratio (TTM)</span>
+                        <span id="detail-pe" class="detail-value">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">EPS (TTM)</span>
+                        <span id="detail-eps" class="detail-value">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Dividend Yield</span>
+                        <span id="detail-dividend" class="detail-value">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Beta</span>
+                        <span id="detail-beta" class="detail-value">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Sector</span>
+                        <span id="detail-sector" class="detail-value">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Industry</span>
+                        <span id="detail-industry" class="detail-value">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Country</span>
+                        <span id="detail-country" class="detail-value">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Description -->
+            <div class="section">
+                <h3>About</h3>
+                <p id="company-description" class="company-description"></p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Data provided by <a href="https://www.alphavantage.co/" target="_blank">Alpha Vantage</a>. Prices may be delayed.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
